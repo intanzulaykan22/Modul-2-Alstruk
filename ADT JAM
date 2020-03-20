@@ -1,0 +1,171 @@
+*Boolean.h*
+/* File: boolean.h */
+/* Definisi type data boolean */
+#ifndef BOOLEAN_H
+#define BOOLEAN_H
+#define boolean unsigned char
+#define true 1
+#define false 0
+#endif
+
+*Jam.h*
+/* File : jam.h */
+
+/* spesifikasi ADT Jam */
+#ifndef jam_H
+#define jam_H
+#include "boolean.h"
+#include "stdio.h"
+
+/* Notasi Akses */
+#define Hour(J) (J).HH
+#define Minute(J) (J).MM
+#define Second(J) (J).SS
+typedef struct 
+{
+ int HH; /* 0..23 */
+ int MM; /* 0..59 */
+ int SS; /* 0..59 */
+} Jam;
+
+/***** Konstruktor ************/
+Jam MakeJam(int H, int M, int S);
+/* Membentuk Jam dari H, M, S yg valid */
+
+/*------------validator jam------------*/
+boolean IsJValid(int H, int M, int S);
+/* Mengirim true jika H,M,S dapat membentuk Jam yang valid */
+
+/*------------Baca & Tulis jam-----------*/
+
+void BacaJam(Jam *J);
+/* I.S. : J tak terdefinisi * /
+/* F.S. : J terdefinisi dan merupakan jam valid */
+/* Proses : mengulang baca komponen H,M,S sehingga membentuk J
+yang valid */
+
+void TulisJam(Jam J);
+/* I.S. : J sembarang */
+/* F.S. : J ditulis ke layar dengan format HH:MM:SS */
+/* Proses : Menulis ke layar */
+
+/*----------Konversi terhadap type jam----------*/
+
+int JamToDetik(Jam J);
+/* Konversi Jam menjadi detik */
+
+Jam DetikToJam(int N);
+/* Konversi detik ke Jam */
+#endif
+
+
+*Jam.c*
+/* File : jam.c */
+
+/* Body ADT Jam */
+
+#include "jam.h"
+
+/* -----------konstruktor Jam--------- */
+
+Jam MakeJam(int H, int M, int S)
+/* Membentuk Jam dari H, M, S yg valid */
+{ 
+  /* Kamus Lokal */
+   Jam J1;
+  /* Algoritma */
+   Hour(J1) = H;
+   Minute(J1) = M;
+   Second(J1) = S;
+   return J1;
+}
+
+/*------------validator Jam------------*/
+
+boolean IsJValid(int H, int M, int S)
+/* Mengirim true jika H,M,S dapat membentuk Jam yang valid */
+
+{
+  /* Kamus Lokal */
+  /* Algoritma */
+   return ((H >= 0 && H <= 23) && (M >= 0 && M <= 59) && (S >= 0 && S <= 59));
+}
+
+/*------------Baca & Tulis jam-----------*/
+
+void BacaJam(Jam *J)
+/* I.S.   : J tak terdefinisi */
+/* F.S.   : J terdefinisi dan merupakan jam valid */
+/* Proses : mengulang baca komponen H, M, S sehingga membentuk J
+             yang valid */
+{
+  /* Kamus Lokal */ 
+   int H, M, S;
+  /* Algoritma */
+   do {
+       printf("Masukkan jam : ");scanf("%d",&H);
+       printf("Masukkan menit : ");scanf("%d",&M);
+       printf("Masukkan detik : ");scanf("%d",&S);
+      } while(!IsJValid(H,M,S));
+   *J = MakeJam(H,M,S);
+}
+
+void TulisJam(Jam J)
+/* I.S. : J sembarang*/
+/* F.S. : J ditulis ke layar dengan format HH:MM:SS */
+/* Proses : Menulis ke layar */
+
+{ 
+  /* Kamus lokal */
+  /* Algoritma */
+   printf("%d:%d:%d",Hour(J),Minute(J),Second(J));
+}
+
+int JamToDetik(Jam J)
+/* Konversi Jam menjadi detik */
+
+{ 
+  /* Kamus Lokal */
+  /* Algoritma */
+   return(3600 *Hour(J) + 60 *Minute(J) + Second(J));
+}
+
+Jam DetikToJam(int N)
+/* Konversi detik ke Jam */
+
+{ 
+  /* Kamus Lokal */
+   int sisa;
+   Jam JOut;
+  /* Algoritma */
+   Hour(JOut) = N / 3600;
+   sisa = N % 3600;
+   Minute(JOut) = sisa / 60;
+   Second(JOut) = sisa % 60;
+   return JOut;
+}
+
+
+*mjam.c*
+/* File : mjam.c */
+/* Program MainJam */
+
+/* Driver ADT Jam */
+
+#include "jam.h"
+#include "jam.c"
+
+int main()
+{ 
+  /* KAMUS */
+   Jam J1, J2;
+  /* ALGORITMA */
+   BacaJam(&J1);
+   printf("Jam sekarang: ");
+   TulisJam(J1); printf("\n");
+   printf("Konversi menjadi detik: %d\n",JamToDetik(J1));
+   J2 = DetikToJam(5000);
+   printf("5000 detik sama dengan jam : ");
+   TulisJam(J2);
+   return 0;
+}
