@@ -1,0 +1,172 @@
+*boolean.h*
+/* File: boolean.h */
+/* Definisi type data boolean */
+#ifndef BOOLEAN_H
+#define BOOLEAN_H
+#define boolean unsigned char
+#define true 1
+#define false 0
+#endif
+
+
+*jarak.h*
+/* File : jarak.h */
+
+/* spesifikasi ADT Jarak */
+#ifndef jarak_H
+#define jarak_H
+#include "boolean.h"
+#include "stdio.h"
+
+/* Notasi Akses */
+#define Kilometer(J) (J).KM
+#define Meter(J) (J).MM
+#define Centimeter(J) (J).CM
+typedef struct 
+{
+ int KM; /* 0..9 */
+ int MM; /* 0..999 */
+ int CM; /* 0..99 */
+} Jarak;
+
+/***** Konstruktor ************/
+Jarak MakeJarak(int KM, int MM, int CM);
+/* Membentuk Jarak dari KM, MM, CM yg valid */
+
+/*------------validator jarak------------*/
+boolean IsJValid(int KM, int MM, int CM);
+/* Mengirim true jika KM,MM,CM dapat membentuk Jarak yang valid */
+
+/*------------Baca & Tulis jarak-----------*/
+
+void BacaJarak(Jarak *J);
+/* I.S. : J tak terdefinisi * /
+/* F.S. : J terdefinisi dan merupakan jarak valid */
+/* Proses : mengulang baca komponen KM,MM,CM sehingga membentuk J
+yang valid */
+
+void TulisJarak(Jarak J);
+/* I.S. : J sembarang */
+/* F.S. : J ditulis ke layar dengan format KM:MM:CM */
+/* Proses : Menulis ke layar */
+
+/*----------Konversi terhadap type jarak----------*/
+
+int KilometerToCentimeter (Jarak J);
+/* Konversi kilometer menjadi centimeter */
+
+Jarak CentimeterToKilometer(int N);
+/* Konversi centimeter ke kilometer */
+#endif
+
+
+*jarak.c*
+/* File : jarak.c */
+
+/* Body ADT Jarak */
+
+#include "jarak.h"
+
+/* -----------konstruktor Jarak--------- */
+
+Jarak MakeJarak(int KM, int MM, int CM)
+/* Membentuk Jarak dari KM, MM, CM yg valid */
+{ 
+  /* Kamus Lokal */
+   Jarak J1;
+  /* Algoritma */
+   Kilometer(J1) = KM;
+   Meter(J1) = MM;
+   Centimeter(J1) = CM;
+   return J1;
+}
+
+/*------------validator Jarak------------*/
+
+boolean IsJValid(int KM, int MM, int CM)
+/* Mengirim true jika KM,MM,CM dapat membentuk Jarak yang valid */
+
+{
+  /* Kamus Lokal */
+  /* Algoritma */
+   return ((KM >= 0 && KM <= 9) && (MM >= 0 && MM <= 999) && (CM >= 0 && CM <= 99));
+}
+
+/*------------Baca & Tulis jarak-----------*/
+
+void BacaJarak(Jarak *J)
+/* I.S.   : J tak terdefinisi */
+/* F.S.   : J terdefinisi dan merupakan jarak valid */
+/* Proses : mengulang baca komponen KM,MM,CM sehingga membentuk J
+             yang valid */
+{
+  /* Kamus Lokal */ 
+   int KM, MM, CM;
+  /* Algoritma */
+   do {
+       printf("Masukkan kilometer : ");scanf("%d",&KM);
+       printf("Masukkan meter : ");scanf("%d",&MM);
+       printf("Masukkan centimeter : ");scanf("%d",&CM);
+      } while(!IsJValid(KM,MM,CM));
+   *J = MakeJarak(KM,MM,CM);
+}
+
+void TulisJarak(Jarak J)
+/* I.S. : J sembarang*/
+/* F.S. : J ditulis ke layar dengan format KM:MM:CM */
+/* Proses : Menulis ke layar */
+
+{ 
+  /* Kamus lokal */
+  /* Algoritma */
+   printf("%d:%d:%d",Kilometer(J),Meter(J),Centimeter(J));
+}
+
+int KilometerToCentimeter(Jarak J)
+/* Konversi Kilometer menjadi centimeter */
+
+{ 
+  /* Kamus Lokal */
+  /* Algoritma */
+   return(100000 *Kilometer(J) + 1000 *Meter(J) + Centimeter(J));
+}
+
+Jarak CentimeterToKilometer(int N)
+/* Konversi centimeter ke Kilometer */
+
+{ 
+  /* Kamus Lokal */
+   int sisa;
+   Jarak JOut;
+  /* Algoritma */
+   Kilometer(JOut) = N / 100000;
+   sisa = N % 100000;
+   Meter(JOut) = sisa / 1000;
+   Centimeter(JOut) = sisa % 100;
+   return JOut;
+}
+
+
+*mjarak.c*
+/* File : mjarak.c */
+/* Program MainJarak */
+
+/* Driver ADT Jarak */
+
+#include "jarak.h"
+#include "jarak.c"
+
+int main()
+{ 
+  /* KAMUS */
+   Jarak J1, J2;
+  /* ALGORITMA */
+   BacaJarak(&J1);
+   printf("Jarak jalan: ");
+   TulisJarak(J1); printf("\n");
+   printf("Konversi menjadi centimeter: %d\n",KilometerToCentimeter(J1));
+   J2 = CentimeterToKilometer(10000);
+   printf("10000 centimeter sama dengan kilometer : ");
+   TulisJarak(J2);
+   return 0;
+}
